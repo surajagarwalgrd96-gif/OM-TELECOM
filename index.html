@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OM TELECOM</title>
+<title>OM TELECOM PRO</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
 body{
@@ -13,86 +15,45 @@ background:#020617;
 color:white;
 }
 
-/* HEADER */
 header{
 text-align:center;
 padding:20px;
 }
-header h1{
-color:#38bdf8;
-margin:5px;
-}
-.top-info{
-display:flex;
-justify-content:center;
-gap:20px;
-font-size:14px;
-opacity:0.8;
-}
 
-/* HERO IMAGE */
-.hero img{
-width:100%;
-border-radius:15px;
-}
+h1{color:#38bdf8}
 
-/* GRID */
-.container{
-display:grid;
-grid-template-columns:1fr;
-gap:15px;
-padding:15px;
-}
-
-/* CARD */
 .card{
 background:#0f172a;
 padding:15px;
+margin:10px;
 border-radius:15px;
-box-shadow:0 0 10px #000;
 }
 
-input{
+input,select{
 width:100%;
 padding:10px;
 margin:5px 0;
 border-radius:8px;
 border:none;
-background:#1e293b;
-color:white;
 }
 
 button{
 width:100%;
-padding:10px;
+padding:12px;
 border:none;
 border-radius:10px;
+background:#38bdf8;
+color:white;
 font-weight:bold;
 cursor:pointer;
-margin-top:5px;
 }
 
-/* BUTTON COLORS */
-.whatsapp{background:#22c55e;}
-.upi{background:#6366f1;}
-.billbtn{background:#10b981;}
-
-.bill{
-background:white;
-color:black;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-display:none;
-}
-
-/* QR */
-.qr{
+img{
 width:100%;
 border-radius:10px;
 }
 
-/* CHATBOT */
+/* Chat */
 .chat{
 position:fixed;
 bottom:10px;
@@ -102,13 +63,6 @@ padding:10px;
 border-radius:10px;
 width:250px;
 }
-
-.chat input{
-width:70%;
-}
-.chat button{
-width:25%;
-}
 </style>
 </head>
 
@@ -116,123 +70,113 @@ width:25%;
 
 <header>
 <h1>OM TELECOM</h1>
-<p>Owner: Suraj | Mobile Repair Expert</p>
-<div class="top-info">
-<span>📞 8210329716</span>
-<span>📍 Giridih</span>
-</div>
+<p>Owner: Suraj | Giridih</p>
 </header>
 
-<!-- HERO IMAGE -->
-<div class="hero">
-<img src="YOUR_SHOP_IMAGE.jpg">
+<div class="card">
+<h2>📸 Shop</h2>
+<img src="shop.jpg">
 </div>
 
-<div class="container">
-
-<!-- BOOKING -->
 <div class="card">
-<h3>📱 Repair Booking</h3>
+<h2>📱 Booking</h2>
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
-<input id="problem" placeholder="Problem">
-<button class="whatsapp" onclick="sendWhatsApp()">Send on WhatsApp</button>
+
+<select id="service">
+<option value="1500">Display Repair (₹1500)</option>
+<option value="4000">Motherboard Repair (₹4000-5000)</option>
+<option value="200">Charging Pin (₹100-200)</option>
+<option value="500">CC Board (₹500-700)</option>
+</select>
+
+<button onclick="sendWhatsApp()">Book Now</button>
 </div>
 
-<!-- UPI -->
 <div class="card">
-<h3>💳 Pay Now (UPI)</h3>
-<img src="YOUR_QR.png" class="qr">
-<button class="upi" onclick="payUPI()">Pay via UPI</button>
+<h2>💳 Payment</h2>
+<img src="qr.png">
+<button onclick="pay()">Pay via UPI</button>
 </div>
 
-<!-- BILL -->
 <div class="card">
-<h3>🧾 Bill Generator</h3>
-<input id="cname" placeholder="Customer Name">
-<input id="service" placeholder="Service">
-<input id="amount" placeholder="Amount">
+<h2>🧾 Generate Bill</h2>
+<input id="bname" placeholder="Customer Name">
 
-<button class="billbtn" onclick="generateBill()">Generate Bill</button>
+<select id="bservice">
+<option value="1500">Display Repair</option>
+<option value="4500">Motherboard Repair</option>
+<option value="150">Charging Pin</option>
+<option value="600">CC Board</option>
+</select>
 
-<div id="billBox" class="bill"></div>
+<button onclick="generateBill()">Generate + Download PDF</button>
+
+<div id="billBox" style="background:white;color:black;padding:10px;margin-top:10px;display:none"></div>
 </div>
 
-<!-- WORK -->
-<div class="card">
-<h3>🛠️ Our Work</h3>
-<img src="https://via.placeholder.com/300">
-<img src="https://via.placeholder.com/300">
-</div>
-
-</div>
-
-<!-- CHATBOT -->
+<!-- Chatbot -->
 <div class="chat">
-<b>🤖 Chat Bot</b><br><br>
-<input id="chatInput" placeholder="Ask...">
+<b>🤖 Chat</b><br>
+<input id="msg" placeholder="Ask...">
 <button onclick="chat()">Send</button>
-<p id="chatReply"></p>
+<p id="reply"></p>
 </div>
 
 <script>
 
-// WHATSAPP
 function sendWhatsApp(){
 let name=document.getElementById("name").value;
 let phone=document.getElementById("phone").value;
-let problem=document.getElementById("problem").value;
+let service=document.getElementById("service").selectedOptions[0].text;
 
-let msg=`Hello OM TELECOM,%0AName:${name}%0APhone:${phone}%0AProblem:${problem}`;
+let msg=`Hello OM TELECOM%0AName:${name}%0APhone:${phone}%0AService:${service}`;
 window.open("https://wa.me/918210329716?text="+msg);
 }
 
-// UPI
-function payUPI(){
+function pay(){
 window.location.href="upi://pay?pa=9708506701@upi&pn=Suraj&cu=INR";
 }
 
-// BILL
 function generateBill(){
-let n=document.getElementById("cname").value;
-let s=document.getElementById("service").value;
-let a=document.getElementById("amount").value;
+let name=document.getElementById("bname").value;
+let service=document.getElementById("bservice").selectedOptions[0].text;
+let amount=document.getElementById("bservice").value;
 
-let html=`
+let billHTML=`
 <h3>OM TELECOM</h3>
-<p>Name: ${n}</p>
-<p>Service: ${s}</p>
-<p>Amount: ₹${a}</p>
-<p style="color:green;">✔ Paid via UPI</p>
+<p>Name: ${name}</p>
+<p>Service: ${service}</p>
+<p>Amount: ₹${amount}</p>
+<p style="color:green;">✔ Paid</p>
 `;
 
-let box=document.getElementById("billBox");
-box.innerHTML=html;
-box.style.display="block";
+document.getElementById("billBox").innerHTML=billHTML;
+document.getElementById("billBox").style.display="block";
+
+// PDF
+const { jsPDF } = window.jspdf;
+let doc = new jsPDF();
+
+doc.text("OM TELECOM", 20, 20);
+doc.text("Customer: "+name, 20, 40);
+doc.text("Service: "+service, 20, 60);
+doc.text("Amount: ₹"+amount, 20, 80);
+doc.text("Thank You!", 20, 100);
+
+doc.save("OM_TELECOM_Bill.pdf");
 }
 
-// CHATBOT (SMART)
 function chat(){
-let input=document.getElementById("chatInput").value.toLowerCase();
-let reply="";
+let m=document.getElementById("msg").value.toLowerCase();
+let r="";
 
-if(input.includes("price")){
-reply="Price depends on damage 📱";
-}
-else if(input.includes("time")){
-reply="Repair takes 1-2 hours ⏱️";
-}
-else if(input.includes("location")){
-reply="We are in Giridih 📍";
-}
-else if(input.includes("contact")){
-reply="Call: 8210329716 ☎️";
-}
-else{
-reply="Please contact on WhatsApp 👍";
-}
+if(m.includes("price")) r="Display ₹1500, Motherboard ₹4000-5000, Charging ₹100-200, CC Board ₹500-700";
+else if(m.includes("location")) r="Giridih Jharkhand";
+else if(m.includes("time")) r="1-2 hours";
+else r="More info ke liye shop visit kare 👍";
 
-document.getElementById("chatReply").innerText=reply;
+document.getElementById("reply").innerText=r;
 }
 
 </script>
