@@ -2,109 +2,239 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Galaxy Hand Control</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OM TELECOM</title>
 
 <style>
-body {
-    margin: 0;
-    overflow: hidden;
-    background: black;
+body{
+margin:0;
+font-family:Arial;
+background:#020617;
+color:white;
 }
 
-canvas {
-    display: block;
+/* HEADER */
+header{
+text-align:center;
+padding:20px;
+}
+header h1{
+color:#38bdf8;
+margin:5px;
+}
+.top-info{
+display:flex;
+justify-content:center;
+gap:20px;
+font-size:14px;
+opacity:0.8;
+}
+
+/* HERO IMAGE */
+.hero img{
+width:100%;
+border-radius:15px;
+}
+
+/* GRID */
+.container{
+display:grid;
+grid-template-columns:1fr;
+gap:15px;
+padding:15px;
+}
+
+/* CARD */
+.card{
+background:#0f172a;
+padding:15px;
+border-radius:15px;
+box-shadow:0 0 10px #000;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:5px 0;
+border-radius:8px;
+border:none;
+background:#1e293b;
+color:white;
+}
+
+button{
+width:100%;
+padding:10px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+margin-top:5px;
+}
+
+/* BUTTON COLORS */
+.whatsapp{background:#22c55e;}
+.upi{background:#6366f1;}
+.billbtn{background:#10b981;}
+
+.bill{
+background:white;
+color:black;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+display:none;
+}
+
+/* QR */
+.qr{
+width:100%;
+border-radius:10px;
+}
+
+/* CHATBOT */
+.chat{
+position:fixed;
+bottom:10px;
+right:10px;
+background:#0f172a;
+padding:10px;
+border-radius:10px;
+width:250px;
+}
+
+.chat input{
+width:70%;
+}
+.chat button{
+width:25%;
 }
 </style>
 </head>
 
 <body>
-<canvas id="canvas"></canvas>
+
+<header>
+<h1>OM TELECOM</h1>
+<p>Owner: Suraj | Mobile Repair Expert</p>
+<div class="top-info">
+<span>📞 8210329716</span>
+<span>📍 Giridih</span>
+</div>
+</header>
+
+<!-- HERO IMAGE -->
+<div class="hero">
+<img src="YOUR_SHOP_IMAGE.jpg">
+</div>
+
+<div class="container">
+
+<!-- BOOKING -->
+<div class="card">
+<h3>📱 Repair Booking</h3>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="problem" placeholder="Problem">
+<button class="whatsapp" onclick="sendWhatsApp()">Send on WhatsApp</button>
+</div>
+
+<!-- UPI -->
+<div class="card">
+<h3>💳 Pay Now (UPI)</h3>
+<img src="YOUR_QR.png" class="qr">
+<button class="upi" onclick="payUPI()">Pay via UPI</button>
+</div>
+
+<!-- BILL -->
+<div class="card">
+<h3>🧾 Bill Generator</h3>
+<input id="cname" placeholder="Customer Name">
+<input id="service" placeholder="Service">
+<input id="amount" placeholder="Amount">
+
+<button class="billbtn" onclick="generateBill()">Generate Bill</button>
+
+<div id="billBox" class="bill"></div>
+</div>
+
+<!-- WORK -->
+<div class="card">
+<h3>🛠️ Our Work</h3>
+<img src="https://via.placeholder.com/300">
+<img src="https://via.placeholder.com/300">
+</div>
+
+</div>
+
+<!-- CHATBOT -->
+<div class="chat">
+<b>🤖 Chat Bot</b><br><br>
+<input id="chatInput" placeholder="Ask...">
+<button onclick="chat()">Send</button>
+<p id="chatReply"></p>
+</div>
 
 <script>
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+// WHATSAPP
+function sendWhatsApp(){
+let name=document.getElementById("name").value;
+let phone=document.getElementById("phone").value;
+let problem=document.getElementById("problem").value;
 
-let particles = [];
-let mouse = { x: canvas.width/2, y: canvas.height/2 };
-
-window.addEventListener("mousemove", (e) => {
-    mouse.x = e.x;
-    mouse.y = e.y;
-});
-
-// Particle class
-class Particle {
-    constructor(x, y) {
-        this.x = x;
-        this.y = y;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = (Math.random() - 0.5) * 2;
-        this.speedY = (Math.random() - 0.5) * 2;
-    }
-
-    update() {
-        let dx = mouse.x - this.x;
-        let dy = mouse.y - this.y;
-        let dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < 150) {
-            this.x -= dx / 20;
-            this.y -= dy / 20;
-        }
-
-        this.x += this.speedX;
-        this.y += this.speedY;
-    }
-
-    draw() {
-        ctx.beginPath();
-        ctx.fillStyle = "white";
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
+let msg=`Hello OM TELECOM,%0AName:${name}%0APhone:${phone}%0AProblem:${problem}`;
+window.open("https://wa.me/918210329716?text="+msg);
 }
 
-// create particles
-for (let i = 0; i < 300; i++) {
-    particles.push(new Particle(
-        Math.random() * canvas.width,
-        Math.random() * canvas.height
-    ));
+// UPI
+function payUPI(){
+window.location.href="upi://pay?pa=9708506701@upi&pn=Suraj&cu=INR";
 }
 
-// draw Saturn
-function drawSaturn(x, y) {
-    ctx.beginPath();
-    ctx.fillStyle = "orange";
-    ctx.arc(x, y, 40, 0, Math.PI * 2);
-    ctx.fill();
+// BILL
+function generateBill(){
+let n=document.getElementById("cname").value;
+let s=document.getElementById("service").value;
+let a=document.getElementById("amount").value;
 
-    ctx.strokeStyle = "white";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.ellipse(x, y, 70, 20, 0, 0, Math.PI * 2);
-    ctx.stroke();
+let html=`
+<h3>OM TELECOM</h3>
+<p>Name: ${n}</p>
+<p>Service: ${s}</p>
+<p>Amount: ₹${a}</p>
+<p style="color:green;">✔ Paid via UPI</p>
+`;
+
+let box=document.getElementById("billBox");
+box.innerHTML=html;
+box.style.display="block";
 }
 
-// animate
-function animate() {
-    ctx.fillStyle = "rgba(0,0,0,0.2)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+// CHATBOT (SMART)
+function chat(){
+let input=document.getElementById("chatInput").value.toLowerCase();
+let reply="";
 
-    particles.forEach(p => {
-        p.update();
-        p.draw();
-    });
-
-    drawSaturn(mouse.x, mouse.y);
-
-    requestAnimationFrame(animate);
+if(input.includes("price")){
+reply="Price depends on damage 📱";
+}
+else if(input.includes("time")){
+reply="Repair takes 1-2 hours ⏱️";
+}
+else if(input.includes("location")){
+reply="We are in Giridih 📍";
+}
+else if(input.includes("contact")){
+reply="Call: 8210329716 ☎️";
+}
+else{
+reply="Please contact on WhatsApp 👍";
 }
 
-animate();
+document.getElementById("chatReply").innerText=reply;
+}
+
 </script>
 
 </body>
